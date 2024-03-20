@@ -28,7 +28,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "PID_fixed_point.h"
+#include <stdint.h>
+#include <stddef.h>
+#include "PID_types.h"
 
 #define PID_ERR_OK 0
 #define PID_ERR_INVALID_ARGUMENT -1

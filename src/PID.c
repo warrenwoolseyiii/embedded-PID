@@ -46,21 +46,11 @@ pid_value_t pid_run(pid_controller_t *pid, pid_value_t input, pid_value_t dt)
     if(!pid)
         return 0;
 
-    pid_value_t error = TO_FIXED_POINT(pid->setpoint - input);
-
+    pid_value_t error = pid->setpoint - input;
     pid->integral += error * dt;
-    pid_value_t derivative = (error - pid->last_error) / dt;
-
-    pid_value_t output = FROM_FIXED_POINT(pid->kp * error + pid->ki * pid->integral + pid->kd * derivative);
-
+    pid_value_t output = (pid->kp * error) + (pid->ki * pid->integral) + (pid->kd * ((error - pid->last_error) / dt));
     pid->last_error = error;
-
-    if(output > pid->out_max)
-        output = pid->out_max;
-    else if(output < pid->out_min)
-        output = pid->out_min;
-
-    return output;
+    return (output < pid->out_min) ? pid->out_min : (output > pid->out_max) ? pid->out_max : output;
 }
 
 void pid_set_setpoint(pid_controller_t *pid, pid_value_t setpoint)
